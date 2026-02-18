@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const rateLimit = require('express-rate-limit');
 const database = require('./src/database/db');
 const TCPServer = require('./src/tcp-server/server');
 const apiRoutes = require('./src/api/routes');
@@ -9,6 +10,15 @@ const app = express();
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
 const TCP_PORT = process.env.TCP_PORT || 2022;
 
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Too many requests from this IP, please try again later.'
+});
+
+app.use(limiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
