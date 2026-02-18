@@ -1,0 +1,35 @@
+{
+  "name": "rahasam-device-management",
+  "version": "1.0.0",
+  "description": "Rahasam Device Management System - Stores information from devices connecting to port 2022 with web dashboard",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "test": "echo \"No tests specified yet\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sad-zz/copilot-web-MIVT--server.git"
+  },
+  "keywords": [
+    "device-management",
+    "tcp-server",
+    "monitoring",
+    "rahasam",
+    "iot"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sad-zz/copilot-web-MIVT--server/issues"
+  },
+  "homepage": "https://github.com/sad-zz/copilot-web-MIVT--server#readme",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "sqlite3": "^5.1.7"
+  }
+}

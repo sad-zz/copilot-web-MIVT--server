@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahasam Device Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #6c757d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls h2 {
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .device-table {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .last-seen {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9em;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .device-details {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading-indicator {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Rahasam Device Management System</h1>
+            <p>Real-time Device Monitoring and Management Dashboard</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="number" id="totalDevices">-</div>
+                <div class="label">Total Devices</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="activeDevices">-</div>
+                <div class="label">Active Devices</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="inactiveDevices">-</div>
+                <div class="label">Inactive Devices</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h2>Connected Devices</h2>
+            <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+        </div>
+
+        <div class="device-table" id="deviceTableContainer">
+            <div class="loading loading-indicator">Loading devices...</div>
+        </div>
+
+        <footer>
+            <p>Rahasam Device Management System v1.0 | Listening on Port 2022</p>
+            <p>Last updated: <span id="lastUpdate">-</span></p>
+        </footer>
+    </div>
+
+    <script>
+        let autoRefresh;
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalDevices').textContent = data.stats.total_devices;
+                    document.getElementById('activeDevices').textContent = data.stats.active_devices;
+                    document.getElementById('inactiveDevices').textContent = data.stats.inactive_devices;
+                }
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        async function fetchDevices() {
+            try {
+                const response = await fetch('/api/devices');
+                const data = await response.json();
+                
+                const container = document.getElementById('deviceTableContainer');
+                
+                if (data.success && data.devices.length > 0) {
+                    let html = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Device ID</th>
+                                    <th>Device Name</th>
+                                    <th>Type</th>
+                                    <th>IP Address</th>
+                                    <th>Port</th>
+                                    <th>Status</th>
+                                    <th>Last Seen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    data.devices.forEach(device => {
+                        const statusClass = device.status === 'active' ? 'status-active' : 'status-inactive';
+                        const lastSeen = new Date(device.last_seen).toLocaleString();
+                        
+                        html += `
+                            <tr>
+                                <td><strong>${device.device_id}</strong></td>
+                                <td>${device.device_name || 'Unknown'}</td>
+                                <td><span class="device-details">${device.device_type || 'Generic'}</span></td>
+                                <td><code>${device.ip_address}</code></td>
+                                <td><code>${device.port}</code></td>
+                                <td><span class="status-badge ${statusClass}">${device.status}</span></td>
+                                <td class="last-seen">${lastSeen}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <h3>No Devices Connected</h3>
+                            <p>Waiting for devices to connect to port 2022...</p>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+            } catch (error) {
+                console.error('Error fetching devices:', error);
+                document.getElementById('deviceTableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error Loading Devices</h3>
+                        <p>Please check the server connection and try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function refreshData() {
+            await fetchStats();
+            await fetchDevices();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshData();
+            autoRefresh = setInterval(refreshData, 5000);
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (autoRefresh) {
+                clearInterval(autoRefresh);
+            }
+        });
+    </script>
+</body>
+</html>
